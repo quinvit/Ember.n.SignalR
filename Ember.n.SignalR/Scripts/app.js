@@ -3,7 +3,7 @@
 (function (win) {
     "use strict";
 
-    win.App = Ember.Application.create({
+    var app = Ember.Application.create({
         name: "ManageCustomerApp",
         rootElement: '#app',
         // Extend to inherit outlet support
@@ -26,7 +26,7 @@
     });
 
     // Data store
-    App.Store = Ember.Object.extend({
+    app.Store = Ember.Object.extend({
         update: function (customer) {
             var message = null;
             var xhr = $.ajax(
@@ -43,7 +43,7 @@
                 });
 
             if (xhr.status != 200) { // error
-                message = { ErrorCode: xhr.status, ErrorMessage: xhr.statusText };
+                message = { errorCode: xhr.status, errorMessage: xhr.statusText };
             }
 
             return message;
@@ -65,7 +65,7 @@
                 });
 
             if (xhr.status != 200) { // error
-                message = { ErrorCode: xhr.status, ErrorMessage: xhr.statusText };
+                message = { errorCode: xhr.status, errorMessage: xhr.statusText };
             }
 
             return message;
@@ -78,7 +78,7 @@
                     url: '/customer/delete/',
                     dataType: 'json',
                     contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify({ 'Id': id }),
+                    data: JSON.stringify({ 'id': id }),
                     type: 'DELETE',
                     async: false,
                     success: function (data) {
@@ -87,7 +87,7 @@
                 });
 
             if (xhr.status != 200) { // error
-                message = { ErrorCode: xhr.status, ErrorMessage: xhr.statusText };
+                message = { errorCode: xhr.status, errorMessage: xhr.statusText };
             }
 
             return message;
@@ -108,7 +108,7 @@
                 });
 
             if (xhr.status != 200) { // error
-                message = { ErrorCode: xhr.status, ErrorMessage: xhr.statusText };
+                message = { errorCode: xhr.status, errorMessage: xhr.statusText };
             }
 
             return message;
@@ -116,41 +116,57 @@
     });
 
     // Models
-    App.CustomerModel = Ember.Object.extend({
+    app.CustomerModel = Ember.Object.extend({
         id: null,
         firstName: null,
         lastName: null,
         email: null,
         phone: null,
         active: false,
+        quiet: false,
         random: function () {
             this.setProperties({ firstName: String.random(), lastName: String.random(), email: String.random().toLowerCase() + '@gmail.com', phone: '(097) ' + Number.random(3) + '-' + Number.random(4) });
             return this;
+        },
+        propertyChanged: function () {
+            try {
+                if (!this.get('quiet')) {
+                    app.hub.server.update(this);
+                }
+            }
+            catch (e) {
+
+            }
+        } .observes('firstName', 'lastName', 'email', 'phone', 'active'),
+        plain: function () {
+            return this.getProperties("id", "firstName", "lastName", "email", "phone", "active");
         }
     });
-    App.ResultModel = Ember.Object.extend({
+    app.ResultModel = Ember.Object.extend({
         errorCode: 0,
         errorMessage: null
     });
 
     // Controllers
-    App.CustomerController = Ember.Controller.extend({
-        store: App.Store.create(),
+    app.CustomerController = Ember.Controller.extend({
+        store: app.Store.create(),
         currentResult: null,
         currentCustomer: null,
         random: function () {
-            var customer = App.CustomerModel.create().random();
+            var customer = app.CustomerModel.create().random();
             if (this.get('currentCustomer')) {
                 this.get('currentCustomer').set('active', false);
             }
             this.set('currentCustomer', customer);
         },
         create: function (customer) {
-            this.set('currentResult', this.get('store').create(customer));
-            if (!this.currentResult.ErrorCode) {
-                this.set('currentCustomer', App.CustomerModel.create());
-                var newCustomer = App.CustomerModel.create(this.get('currentResult').data);
+            this.set('currentResult', this.get('store').create(customer.plain()));
+            if (!this.currentResult.errorCode) {
+                this.set('currentCustomer', app.CustomerModel.create());
+                var newCustomer = app.CustomerModel.create(this.get('currentResult').data);
                 this.get('customers').pushObject(newCustomer);
+
+                app.hub.server.add(newCustomer.plain());
             }
         },
         remove: function (id) {
@@ -158,9 +174,11 @@
             this.set('currentResult', this.store.remove(customer.id));
             if (!this.currentResult.errorCode) {
                 if (this.get('currentCustomer').id === id) {
-                    this.set('currentCustomer', App.CustomerModel.create());
+                    this.set('currentCustomer', app.CustomerModel.create());
                 }
                 this.get('customers').removeObject(customer);
+
+                app.hub.server.remove(customer.plain());
             }
         },
         read: function (id) {
@@ -169,24 +187,25 @@
                 if (Ember.isArray(this.currentResult.data)) { // Read all
                     var array = Ember.ArrayController.create({ content: [] });
                     this.currentResult.data.forEach(function (item, index) {
-                        array.pushObject(App.CustomerModel.create(item));
+                        array.pushObject(app.CustomerModel.create(item));
                     });
                     return array;
                 }
                 else { // An object
-                    var customer = this.get('customers')
-                    .findProperty('id', this.currentResult.data.id)
-                    .setProperties(this.currentResult.data);
+                    var customer = this.get('customers').findProperty('id', this.currentResult.data.id)
+                    customer && customer.setProperties(this.currentResult.data);
                     return customer;
                 }
             }
             else { // Empty result
-                return Ember.ArrayController.create({ content: [] });
+                return id ? null : Ember.ArrayController.create({ content: [] });
             }
         },
         update: function (customer) {
-            this.set('currentResult', this.store.update(customer));
+            this.set('currentResult', this.store.update(customer.plain()));
             if (!this.currentResult.errorCode) {
+
+                app.hub.server.update(customer.plain());
             }
         },
         save: function (customer) {
@@ -210,7 +229,7 @@
             var customer = this.read(id);
             this.set('currentCustomer', customer.set('active', true));
             this.set('currentResult',
-                App.ResultModel.create({
+                app.ResultModel.create({
                     errorMessage: 'Click Submit to save current customer.',
                     data: customer.getProperties("firstName", "lastName", "email", "phone") // Keep copy
                 }));
@@ -220,20 +239,20 @@
             var array = this.read();
             this.set('customers', array);
             this.random();
-            this.set('currentResult', App.ResultModel.create({ errorMessage: 'Click Submit to create new customer.' }));
+            this.set('currentResult', app.ResultModel.create({ errorMessage: 'Click Submit to create new customer.' }));
         }
     });
-    App.customersController = App.CustomerController.create();
+    app.customerController = app.CustomerController.create();
 
     // Views
-    App.MessageView = Ember.View.extend({
-        template: App.getView('message'),
+    app.MessageView = Ember.View.extend({
+        template: app.getView('message'),
         name: "message"
     });
 
-    App.CreateEditCustomerView = Ember.View.extend({
-        template: App.getView('create_edit_customer'),
-        contentBinding: 'controller.namespace.customersController',
+    app.CreateEditCustomerView = Ember.View.extend({
+        template: app.getView('create_edit_customer'),
+        contentBinding: 'controller.namespace.customerController',
         name: "create_edit_customer",
         save: function (event) {
             this.get('content').save();
@@ -243,10 +262,10 @@
         }
     });
 
-    App.CustomerListView = Ember.View.extend({
-        contentBinding: 'controller.namespace.customersController',
-        customersBinding: 'controller.namespace.customersController.customers',
-        template: App.getView('customer_list'),
+    app.CustomerListView = Ember.View.extend({
+        contentBinding: 'controller.namespace.customerController',
+        customersBinding: 'controller.namespace.customerController.customers',
+        template: app.getView('customer_list'),
         name: "customer_list",
         edit: function (event) {
             var id = $(event.target).attr('value');
@@ -270,25 +289,28 @@
         }
     });
 
-    App.ApplicationView = Ember.View.extend({
+    app.ApplicationView = Ember.View.extend({
         Title: "Example of Ember.js application",
-        template: App.getView('main'),
+        template: app.getView('main'),
         name: "ApplicationView"
     });
 
     // Router, this need to connect view and controller
-    App.Router = Ember.Router.extend({
+    app.Router = Ember.Router.extend({
         root: Ember.Route.extend({
             defaults: Ember.Route.transitionTo('index'),
             index: Ember.Route.extend({
                 route: '/',
                 connectOutlets: function (router) {
                     var controller = router.get('applicationController');
-                    var context = App.customersController;
+                    var context = app.customerController;
                     context.initialize();
                     controller.connectOutlet('application', context); // connectOutlet(nameOfView without suffix *view, controller)
                 }
             })
         })
     });
+
+    win.App = app;
+
 })(window);

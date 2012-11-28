@@ -151,6 +151,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\app.js" />
+    <Content Include="Scripts\hub.js" />
     <Content Include="Scripts\jquery.signalR-0.5.3.js" />
     <Content Include="Scripts\jquery.signalR-0.5.3.min.js" />
     <Content Include="Scripts\jquery.signalR-1.0.0-alpha2.js" />
