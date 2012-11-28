@@ -1,0 +1,9 @@
+﻿{{#unless content.currentResult.errorCode}}
+<div id='message'>
+    {{content.currentResult.errorMessage}} &nbsp;
+</div>
+{{else}}
+<div id='error'>
+    {{content.currentResult.errorMessage}} &nbsp;
+</div>
+{{/unless}}

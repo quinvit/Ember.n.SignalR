@@ -1,0 +1,67 @@
+﻿<div id="customerListHeader">
+    List of customers
+</div>
+<div id="customerListContent">
+    <table>
+        {{#unless view.customers.length}}
+        <tr>
+            <th>
+                First name
+            </th>
+            <th>
+                Last name
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Phone
+            </th>
+        </tr>
+        <tr>
+            <td colspan="4" align="center">
+                There is no customer yet
+            </td>
+        </tr>
+        {{else}}
+        <tr>
+            <th>
+                First name
+            </th>
+            <th>
+                Last name
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Phone
+            </th>
+            <th>
+                #Action
+            </th>
+        </tr>
+        {{#each view.customers}}
+        <tr {{bindAttr class="this.active:active:normal"}} {{bindAttr id="this.id"}}>
+            <td>
+                {{this.firstName}}
+            </td>
+            <td>
+                {{this.lastName}}
+            </td>
+            <td>
+                {{this.email}}
+            </td>
+            <td>
+                {{this.phone}}
+            </td>
+            <td align="center">
+                <a href="#" class="edit" {{action "edit" on="click" target="this" }} {{bindAttr value="this.id"}}>Edit</a>
+                |
+                <a href="#" class="delete" {{action "remove" on="click" target="this" }} {{bindAttr value="this.id"}}>Delete</a>
+            </td>
+        </tr>
+        {{/each}} 
+        {{/unless}}
+    </table>
+</div>

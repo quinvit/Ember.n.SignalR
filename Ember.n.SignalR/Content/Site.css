@@ -1,0 +1,109 @@
+body
+{
+	font-size: .85em;
+	font-family: "Segoe UI" , Verdana, Helvetica, Sans-Serif;
+	color: #232323;
+	background-color: #fff;
+}
+
+a, button
+{
+	text-decoration: none;
+	color: #007edf;
+	text-shadow: none;
+	transition: color 0.5s ease;
+	transition: text-shadow 0.5s ease;
+	-webkit-transition: color 0.5s ease;
+	-webkit-transition: text-shadow 0.5s ease;
+	-moz-transition: color 0.5s ease;
+	-moz-transition: text-shadow 0.5s ease;
+	-o-transition: color 0.5s ease;
+	-o-transition: text-shadow 0.5s ease;
+	-ms-transition: color 0.5s ease;
+	-ms-transition: text-shadow 0.5s ease;
+}
+
+a:hover, button:hover
+{
+	color: #0069ba;
+	text-shadow: #0090ff 0px 0px 2px;
+}
+
+/* `Ember.js
+----------------------------------------------------------------------------------------------------*/
+
+#app
+{
+	font-size: 13px;
+	margin-left: 10px;
+}
+
+#app h3
+{
+	font-family: 'Cinzel' , Serif;
+	font-size: 24px;
+}
+
+#message
+{
+	color: #009900;
+	line-height: 30px;
+}
+
+#error
+{
+	color: #dd0000;
+	line-height: 30px;
+}
+
+#mainForm
+{
+	line-height: 20px;
+}
+
+#customerListContent table
+{
+	border-collapse: collapse;
+	min-width: 600px;
+	line-height: 22px;
+}
+
+#customerListContent table tr td
+{
+	border: 1px solid #004A73;
+}
+
+#customerListContent table tr.active
+{
+	background-color: #ffee99;
+}
+
+#customerListContent table tr th
+{
+	color: #eee;
+	border: 1px solid #004A73;
+	background-clip: border-box;
+	background-color: #449BCA;
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#3C91C2), to(#449BCA));
+	background-origin: padding-box;
+	line-height: 24px;
+}
+
+#footer
+{
+	font-size: 12px;
+	bottom: 0;
+	right: 0;
+	margin-right: 5px;
+	margin-bottom: 2px;
+	position: absolute;
+	font-variant: small-caps;
+	font-style: italic;
+	font-family: 'Cinzel' , Serif;
+}
+
+#customerListHeader
+{
+	font-weight: bold;
+	font-style: italic;
+}
