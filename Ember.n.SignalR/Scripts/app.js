@@ -17,8 +17,8 @@
                 {
                     url: '/Templates/' + name + '.htm',
                     async: false,
-                    success: function (xhr, status) {
-                        template = xhr.responseText;
+                    success: function (text) {
+                        template = text;
                     }
                 });
             return Ember.Handlebars.compile(template);
