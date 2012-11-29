@@ -56,7 +56,7 @@
                     url: '/customer/read/',
                     dataType: 'json',
                     contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify({ 'Id': id }),
+                    data: JSON.stringify({ 'id': id }),
                     type: 'POST',
                     async: false,
                     success: function (data) {
