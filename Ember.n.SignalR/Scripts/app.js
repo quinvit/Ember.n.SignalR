@@ -17,7 +17,7 @@
                 {
                     url: '/Templates/' + name + '.htm',
                     async: false,
-                    complete: function (xhr, status) {
+                    success: function (xhr, status) {
                         template = xhr.responseText;
                     }
                 });
