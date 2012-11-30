@@ -155,7 +155,9 @@
         random: function () {
             var customer = app.CustomerModel.create().random();
             if (this.get('currentCustomer')) {
-                this.get('currentCustomer').set('active', false);
+                this.get('currentCustomer')
+                    .set('active', false)
+                    .setProperties(this.get('currentResult').data);
             }
             this.set('currentCustomer', customer);
         },
