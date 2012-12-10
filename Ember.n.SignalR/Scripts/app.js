@@ -173,6 +173,7 @@
         },
         remove: function (id) {
             var customer = this.get('customers').findProperty('id', id);
+            if (!customer) return;
             this.set('currentResult', this.store.remove(customer.id));
             if (!this.currentResult.errorCode) {
                 if (this.get('currentCustomer').id === id) {
