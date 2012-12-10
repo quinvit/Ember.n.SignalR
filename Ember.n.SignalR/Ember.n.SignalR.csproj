@@ -178,7 +178,12 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="_Dependencies\FluentValidation.dll" />
+    <Content Include="_Dependencies\Microsoft.AspNet.SignalR.Core.dll" />
+    <Content Include="_Dependencies\Microsoft.AspNet.SignalR.Hosting.AspNet.dll" />
+    <Content Include="_Dependencies\Microsoft.AspNet.SignalR.Hosting.Common.dll" />
     <Content Include="_Dependencies\Newtonsoft.Json.dll" />
+    <Content Include="_Dependencies\System.Web.Optimization.dll" />
+    <Content Include="_Dependencies\System.Web.Providers.dll" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
