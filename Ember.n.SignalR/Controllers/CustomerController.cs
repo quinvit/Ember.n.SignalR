@@ -9,6 +9,7 @@
     using FluentValidation.Results;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
+    using Ember.n.SignalR.Hubs;
 
     public class CustomerController : Controller
     {
@@ -57,6 +58,9 @@
 
             r.Data = customer;
 
+            // Broadcast to all clients
+            CustomerHub.Instance.Clients.All.remove(JsonConvert.SerializeObject(customer, _settings));
+
             return JsonConvert.SerializeObject(r, _settings);
         }
 
@@ -92,6 +96,10 @@
             }
 
             r.Data = customer;
+
+            // Broadcast to all clients
+            CustomerHub.Instance.Clients.All.update(JsonConvert.SerializeObject(customer, _settings));
+
             return JsonConvert.SerializeObject(r, _settings);
         }
 
@@ -116,6 +124,9 @@
             CustomerDS.Serialize(DateTime.Now);
 
             r.Data = customer; // Return current customer
+
+            // Broadcast to all clients
+            CustomerHub.Instance.Clients.All.add(JsonConvert.SerializeObject(customer, _settings));
 
             return JsonConvert.SerializeObject(r, _settings);
         }

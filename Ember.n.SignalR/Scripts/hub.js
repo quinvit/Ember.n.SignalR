@@ -23,7 +23,13 @@
     hub.client.remove = function (message) {
         var customer = JSON.parse(message);
         var c = findCustomer(customer.id);
-        c && app.customerController.get('customers').removeObject(c);
+        if (c) {
+            if (c.id === app.customerController.get('currentCustomer').id) {
+                app.customerController.set('currentCustomer', null);
+                app.customerController.random();
+            }
+            app.customerController.get('customers').removeObject(c);
+        }
     }
 
     $.connection.hub.start();

@@ -130,8 +130,8 @@
         },
         propertyChanged: function () {
             try {
-                if (!this.get('quiet')) {
-                    app.hub.server.update(this);
+                if (!this.get('quiet') && this.get('id')) {
+                    app.hub.server.update(this.plain());
                 }
             }
             catch (e) {
@@ -156,10 +156,13 @@
             var customer = app.CustomerModel.create().random();
             if (this.get('currentCustomer')) {
                 this.get('currentCustomer')
+                    .set('quiet', true)
                     .set('active', false)
-                    .setProperties(this.get('currentResult').data);
+                    .setProperties(this.get('currentResult').data)
+                    .set('quiet', false);
             }
             this.set('currentCustomer', customer);
+            this.set('currentResult', app.ResultModel.create({ errorMessage: 'Click Submit to create new customer.' }));
         },
         create: function (customer) {
             this.set('currentResult', this.get('store').create(customer.plain()));
@@ -167,8 +170,6 @@
                 this.set('currentCustomer', app.CustomerModel.create());
                 var newCustomer = app.CustomerModel.create(this.get('currentResult').data);
                 this.get('customers').pushObject(newCustomer);
-
-                app.hub.server.add(newCustomer.plain());
             }
         },
         remove: function (id) {
@@ -180,8 +181,6 @@
                     this.set('currentCustomer', app.CustomerModel.create());
                 }
                 this.get('customers').removeObject(customer);
-
-                app.hub.server.remove(customer.plain());
             }
         },
         read: function (id) {
@@ -207,8 +206,6 @@
         update: function (customer) {
             this.set('currentResult', this.store.update(customer.plain()));
             if (!this.currentResult.errorCode) {
-
-                app.hub.server.update(customer.plain());
             }
         },
         save: function (customer) {
@@ -242,7 +239,6 @@
             var array = this.read();
             this.set('customers', array);
             this.random();
-            this.set('currentResult', app.ResultModel.create({ errorMessage: 'Click Submit to create new customer.' }));
         }
     });
     app.customerController = app.CustomerController.create();

@@ -4,9 +4,17 @@
     using Microsoft.AspNet.SignalR.Hubs;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
+    using Microsoft.AspNet.SignalR;
 
     public class CustomerHub : Hub
     {
+        public static IHubContext Instance
+        {
+            get{
+                return GlobalHost.ConnectionManager.GetHubContext<CustomerHub>();
+            }
+        }
+
         JsonSerializerSettings _settings = new JsonSerializerSettings
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
