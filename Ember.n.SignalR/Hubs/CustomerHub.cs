@@ -1,6 +1,6 @@
 ﻿namespace Ember.n.SignalR.Hubs
 {
-    using Ember.n.SignalR.Models;
+    using Ember.n.SignalR.DTOs;
     using Microsoft.AspNet.SignalR.Hubs;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;

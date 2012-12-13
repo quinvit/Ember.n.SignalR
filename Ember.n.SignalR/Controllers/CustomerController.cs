@@ -4,7 +4,7 @@
     using System.Linq;
     using System.Web.Mvc;
     using Ember.n.SignalR.DS;
-    using Ember.n.SignalR.Models;
+    using Ember.n.SignalR.DTOs;
     using Ember.n.SignalR.Validators;
     using FluentValidation.Results;
     using Newtonsoft.Json;

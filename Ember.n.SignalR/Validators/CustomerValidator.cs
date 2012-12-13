@@ -1,6 +1,6 @@
 ﻿namespace Ember.n.SignalR.Validators
 {
-    using Ember.n.SignalR.Models;
+    using Ember.n.SignalR.DTOs;
     using FluentValidation;
 
     public class CustomerValidator: AbstractValidator<Customer>

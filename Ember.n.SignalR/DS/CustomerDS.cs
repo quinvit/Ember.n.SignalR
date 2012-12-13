@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Web;
-    using Ember.n.SignalR.Models;
+    using Ember.n.SignalR.DTOs;
 
     /// <summary>
     /// Automatic synchronization to .em file

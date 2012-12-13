@@ -297,7 +297,6 @@
     // Router, this need to connect view and controller
     app.Router = Ember.Router.extend({
         root: Ember.Route.extend({
-            defaults: Ember.Route.transitionTo('index'),
             index: Ember.Route.extend({
                 route: '/',
                 connectOutlets: function (router) {

@@ -5,18 +5,10 @@
     <table>
         {{#unless view.customers.length}}
         <tr>
-            <th>
-                First name
-            </th>
-            <th>
-                Last name
-            </th>
-            <th>
-                Email
-            </th>
-            <th>
-                Phone
-            </th>
+            <th> First name </th>
+            <th> Last name </th>
+            <th> Email </th>
+            <th> Phone </th>
         </tr>
         <tr>
             <td colspan="4" align="center">
@@ -25,21 +17,11 @@
         </tr>
         {{else}}
         <tr>
-            <th>
-                First name
-            </th>
-            <th>
-                Last name
-            </th>
-            <th>
-                Email
-            </th>
-            <th>
-                Phone
-            </th>
-            <th>
-                #Action
-            </th>
+            <th> First name </th>
+            <th> Last name </th>
+            <th> Email </th>
+            <th> Phone </th>
+            <th> #Action </th>
         </tr>
         {{#each view.customers}}
         <tr {{bindAttr class="this.active:active:normal"}} {{bindAttr id="this.id"}}>
