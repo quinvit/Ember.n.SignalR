@@ -158,6 +158,10 @@
     <Compile Include="Validators\CustomerValidator.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="docs\embermvc.png" />
+    <Content Include="docs\index.htm" />
+    <Content Include="docs\MVC-Process.png" />
+    <Content Include="docs\Sample.png" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\app.js" />

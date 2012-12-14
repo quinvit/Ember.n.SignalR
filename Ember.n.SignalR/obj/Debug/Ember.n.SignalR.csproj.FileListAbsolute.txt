@@ -77,3 +77,4 @@ C:\Users\Qui.Nguyen\Documents\GitHub\quinvit\Ember.n.SignalR\bin\System.Web.WebP
 C:\Users\Qui.Nguyen\Documents\GitHub\quinvit\Ember.n.SignalR\bin\System.Web.WebPages.Razor.xml
 C:\Users\Qui.Nguyen\Documents\GitHub\quinvit\Ember.n.SignalR\obj\Debug\Ember.n.SignalR.dll
 C:\Users\Qui.Nguyen\Documents\GitHub\quinvit\Ember.n.SignalR\obj\Debug\Ember.n.SignalR.pdb
+C:\Users\Qui.Nguyen\Documents\GitHub\quinvit\Ember.n.SignalR\obj\Debug\Ember.n.SignalR.csprojResolveAssemblyReference.cache
