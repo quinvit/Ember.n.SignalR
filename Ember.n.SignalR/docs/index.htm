@@ -101,8 +101,9 @@ License:     MIT
         The model is where data is kept, the view describes the presentation of application
         and the controller acts as the link between model and view.
     </p>
-    This is a Ember.js's MVC implementation, client side part
-    <img src="embermvc.png" alt="Ember.js's MVC implementation" />
+    This is a Ember.js's MVC implementation, client side part<p>
+        &nbsp;</p>
+&nbsp;<img src="embermvc.png" alt="Ember.js's MVC implementation" />
     <p>
         There is another important concept in Ember.js, that is Router or StateManager,
         it works mostly like ASP.NET MVC Route, but in client side. In this article, a router
@@ -113,8 +114,7 @@ License:     MIT
     <h2>Set up project</h2>
     <p>
         At first, we need to create an empty ASP.NET MVC project, I use ASP.NET MVC4 with
-        Razor view engine, this is the <strong>_Layout.cshtml</strong>
-    </p>
+        Razor view engine, this is the <strong>_Layout.cshtml</strong>.</p>
     <pre>
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
@@ -143,12 +143,12 @@ License:     MIT
 &lt;script src=&quot;../../Scripts/u.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
 &lt;script src=&quot;../../Scripts/app.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
 </pre>
-    - <em>u.js</em>contains 2 method to random a string and a number in javascript -
-    <strong>app.js</strong>contains all javascript codes for application
+    - <em>u.js </em>contains 2 method to random a string and a number in javascript -
+    <strong>app.js </strong>contains all javascript codes for application.
     <h2>The Model in server side</h2>
     <p>
         We create simple customer DTO (in this example we use DTO as model) with basic information and simple result for REST
-        method
+        method.
     </p>
     Customer.cs
     <pre>
@@ -177,7 +177,7 @@ License:     MIT
         We already defined DTO, now we need to create a simple customer REST service transfer
         data in JSON format <strong>CustomerController.cs</strong>host at <strong>/customer/
         </strong>. To conform namming convention between C# and Javascript JSON object,
-        I use <strong>Newtonsoft.Json.Serialization</strong>with <em>CamelCasePropertyNamesContractResolver
+        I use <strong>Newtonsoft.Json.Serialization</strong>with <em>CamelCasePropertyNamesContractResolver.
         </em>
     </p>
     <pre>
@@ -244,12 +244,12 @@ License:     MIT
         </strong>- We extend ApplicationController to inherit outlet support - ready event,
         this is optional, we define it to put additional code when needed - getView method,
         I define this method to synchronous get a template via Ajax, then use Handlebars
-        compile it to a view
+        compile it to a view.
     </p>
     <h2>The Ember Model</h2>
     <p>
         We need to create a data store object at client side to interact with REST service
-        /customer/
+        <em>/customer/</em>
     </p>
     <pre>
     // Data store
@@ -374,7 +374,7 @@ License:     MIT
         - random: create a random customer by using 2 random method in u.js 
         - plain: get
         back JSON object before send to REST service to improve performance (no need additional
-        properties of Ember.Object)
+        properties of Ember.Object).
     </p>
     <h2>The Ember Controller</h2>
     <pre>
@@ -488,7 +488,7 @@ License:     MIT
         in seperated htm files and load via ajax and using Ember.Handlebars compile the
         response text, it is easier to modify than put it in script tag, we could use any
         html editor such as MS Visual Studio, Notepad++...to edit view templates. Let see
-        create_edit_customer template, it is defined at create_edit_customer.htm.
+        <em>create_edit_customer</em> template, it is defined at <em>create_edit_customer.htm</em>.
     </p>
     <pre>
 &lt;div id=&quot;mainForm&quot;&gt;
@@ -854,8 +854,16 @@ License:     MIT
 
     </p>
 
-
-
+    <h2>
+        References
+        
+    </h2>
+    <p>
+        <a href="http://handlebarsjs.com/" target="_blank">http://handlebarsjs.com/</a>
+        <br />
+        <a href="http://emberjs.com/" target="_blank">http://emberjs.com/</a>
+        <br />
+    </p>
 
 
     <h2>Points of Interest</h2>
