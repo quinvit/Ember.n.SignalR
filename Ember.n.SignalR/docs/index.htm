@@ -357,7 +357,8 @@ License:     MIT
         active: false,
         quiet: false,
         random: function () {
-            this.setProperties({ firstName: String.random(), lastName: String.random(), email: String.random().toLowerCase() + '@gmail.com', phone: '(097) ' + Number.random(3) + '-' + Number.random(4) });
+            this.setProperties({ firstName: String.random(), lastName: String.random(), 
+                    email: String.random().toLowerCase() + '@gmail.com', phone: '(097) ' + Number.random(3) + '-' + Number.random(4) });
             return this;
         },
         plain: function () {
