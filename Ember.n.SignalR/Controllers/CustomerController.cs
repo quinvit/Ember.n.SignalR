@@ -33,11 +33,11 @@
 
             if (id == Guid.Empty || id == null)
             {
-                r.Data = CustomerDS.Customers.AsEnumerable<Customer>();
+                r.Data = CrudDS<Customer>.Items.AsEnumerable<Customer>();
             }
             else
             {
-                r.Data = CustomerDS.Customers.Find(c => c.Id == id);
+                r.Data = CrudDS<Customer>.Items.Find(c => c.Id == id);
             }
 
             return JsonConvert.SerializeObject(r, _settings);
@@ -47,9 +47,9 @@
         public string Delete(Guid id)
         {
             Result r = new Result { ErrorCode = 0, ErrorMessage = "Delete customer successful." };
-            var customer = CustomerDS.Customers.First(c => c.Id == id);
-            bool ok = (customer == null) ? false : CustomerDS.Customers.Remove(customer);
-            CustomerDS.Serialize(DateTime.Now);
+            var customer = CrudDS<Customer>.Items.First(c => c.Id == id);
+            bool ok = (customer == null) ? false : CrudDS<Customer>.Items.Remove(customer);
+            CrudDS<Customer>.Serialize(DateTime.Now);
             if (!ok)
             {
                 r.ErrorCode = -1;
@@ -69,7 +69,7 @@
         {
             Result r = new Result { ErrorCode = 0, ErrorMessage = "Update customer successful." };
 
-            Customer item = CustomerDS.Customers.Find(c => c.Id == customer.Id);
+            Customer item = CrudDS<Customer>.Items.Find(c => c.Id == customer.Id);
             if (customer == null)
             {
                 r.ErrorCode = -1;
@@ -92,7 +92,7 @@
                 item.LastName = customer.LastName;
                 item.Email = customer.Email;
                 item.Phone = customer.Phone;
-                CustomerDS.Serialize(DateTime.Now);
+                CrudDS<Customer>.Serialize(DateTime.Now);
             }
 
             r.Data = customer;
@@ -120,8 +120,8 @@
             }
 
             customer.Id = Guid.NewGuid();
-            CustomerDS.Customers.Add(customer);
-            CustomerDS.Serialize(DateTime.Now);
+            CrudDS<Customer>.Items.Add(customer);
+            CrudDS<Customer>.Serialize(DateTime.Now);
 
             r.Data = customer; // Return current customer
 
