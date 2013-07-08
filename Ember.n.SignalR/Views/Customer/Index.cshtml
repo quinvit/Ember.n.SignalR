@@ -1,8 +1,15 @@
 ﻿@{
     ViewBag.Title = "Ember.n.SignalR";
 }
-<div id="app">
-</div>
+
+<script type="text/x-handlebars">
+  {{outlet}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="application">
+    {{view App.ApplicationView}}
+</script>
+
 <script src="../../Scripts/u.js" type="text/javascript"></script>
 <script src="../../Scripts/app.js" type="text/javascript"></script>
 <script src="/signalr/hubs" type="text/javascript"></script>

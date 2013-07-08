@@ -94,9 +94,17 @@ and the controller acts as the link between the model and the view.</p><p><img w
 <pre lang="xml">@{
     ViewBag.Title = &quot;Ember.n.SignalR&quot;;
 }
-&lt;div id=&quot;app&quot;&gt;&lt;/div&gt;
+&lt;script type=&quot;text/x-handlebars&quot;&gt;
+  {{outlet}}
+&lt;/script&gt;
+
+&lt;script type=&quot;text/x-handlebars&quot; data-template-name=&quot;application&quot;&gt;
+    {{view App.ApplicationView}}
+&lt;/script&gt;
+
 &lt;script src=&quot;../../Scripts/u.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-&lt;script src=&quot;../../Scripts/app.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</pre>
+&lt;script src=&quot;../../Scripts/app.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+</pre>
 <ul>
 <li><em>u.js</em> contains two methods to random a string and a number in JavaScript</li>
 <li><em>app.js</em> contains all JavaScript code for the application.</li>
@@ -163,32 +171,22 @@ I use <code>Newtonsoft.Json.Serialization</code> with <code>CamelCasePropertyNam
     </p>
     <h2>The Ember Application</h2>
     <p>At a glance, we create an application object</p>
-    <pre lang="jscript">var app = Ember.Application.create({
-    name: &quot;ManageCustomerApp&quot;,
-    rootElement: '#app',
-    // Extend to inherit outlet support
-    ApplicationController: Ember.Controller.extend(),
-    ready: function () {
-        this.initialize();
-    },
-    getView: function (name) {
-        var template = '';
+    <pre lang="jscript">    function getView(name) {
+        var template = &#39;&#39;;
         $.ajax(
-            {
-                url: '/Templates/' + name + '.htm',
-                async: false,
-                success: function (text) {
-                    template = text;
-                }
-            });
+                {
+                    url: &#39;/Templates/&#39; + name + &#39;.htm&#39;,
+                    async: false,
+                    success: function (text) {
+                        template = text;
+                    }
+                });
         return Ember.Handlebars.compile(template);
-    }
-});</pre>
-<p>The <code>rootElement</code> defines application outlet is the id of main div in <em>Index.cshtml</em> - We extend 
-<code>ApplicationController</code> to inherit outlet support </p><p>
-</p><p>
-</p><ul><li><code>ready</code>: event,
-        this is optional, we define it to put additional code when needed</li><li><code>getView</code>: method,
+    };
+
+    wnd.App = Ember.Application.create();</pre>
+
+</p><ul><li><code>getView</code>: method,
         I define this method to synchronously get a template via Ajax, then use Handlebars
         compile it to a view.</li></ul><p>
 
@@ -197,7 +195,7 @@ I use <code>Newtonsoft.Json.Serialization</code> with <code>CamelCasePropertyNam
         We need to create a data store object at client side to interact with REST service
         <em>/customer/</em>&nbsp;</p>
     <pre lang="jscript">// Data store
-app.Store = Ember.Object.extend({
+App.Store = Ember.Object.extend({
     update: function (customer) {
         var message = null;
         var xhr = $.ajax(
@@ -290,7 +288,7 @@ app.Store = Ember.Object.extend({
         return object in JSON format, in order binding it to views, we need to define it
         as Ember model.
     </p>
-    <pre lang="jscript">app.CustomerModel = Ember.Object.extend({
+    <pre lang="jscript">App.CustomerModel = Ember.Object.extend({
     id: null,
     firstName: null,
     lastName: null,
@@ -307,7 +305,7 @@ app.Store = Ember.Object.extend({
         return this.getProperties(&quot;id&quot;, &quot;firstName&quot;, &quot;lastName&quot;, &quot;email&quot;, &quot;phone&quot;, &quot;active&quot;);
     }
 });
-app.ResultModel = Ember.Object.extend({
+App.ResultModel = Ember.Object.extend({
     errorCode: 0,
     errorMessage: null
 });</pre>
@@ -318,7 +316,7 @@ app.ResultModel = Ember.Object.extend({
 for additional properties of <code>Ember.Object</code>).</li>
 </ul>
   <h2>The Ember Controller</h2>
-<pre lang="jscript">app.CustomerController = Ember.Controller.extend({
+<pre lang="jscript">App.CustomerController = Ember.Controller.extend({
     store: app.Store.create(),
     currentResult: null,
     currentCustomer: null,
@@ -409,9 +407,9 @@ for additional properties of <code>Ember.Object</code>).</li>
         this.set('currentResult', app.ResultModel.create({ errorMessage: 'Click Submit to create new customer.' }));
     }
 });
-app.customerController = app.CustomerController.create();</pre>
+app.applicationController = app.CustomerController.create();</pre>
     <p>
-        Our <code>customerController </code>controls logic when create, update or delete a customer, it stores
+        Our <code>applicationController </code>controls logic when create, update or delete a customer, it stores
         result of each action in <code>currentResult</code> property and stores 
 		editing/creating
         customer in <code>currentCustomer</code> property. The customers array model is our customers
@@ -431,57 +429,54 @@ app.customerController = app.CustomerController.create();</pre>
 		<code>create_edit_customer</code> template, it is defined at <em>create_edit_customer.htm</em>.
     </p>
     <pre lang="xml">&lt;div id=&quot;mainForm&quot;&gt;
-
+    
     &lt;div&gt;
         &lt;label for=&quot;firstName&quot;&gt;
             First name&lt;/label&gt;&lt;br /&gt;
-            {{view Ember.TextField valueBinding=&quot;content.currentCustomer.firstName&quot;}}
-            &lt;a href=&quot;#&quot; {{action &quot;random&quot; 
-              on=&quot;click&quot; target=&quot;this&quot; }}&gt;Random new customer&lt;/a&gt;
+            {{view Ember.TextField valueBinding=&quot;controller.currentCustomer.firstName&quot;}}
+            &lt;a href=&quot;#&quot; {{action &quot;random&quot; on=&quot;click&quot; target=&quot;view&quot; }}&gt;Random new customer&lt;/a&gt;
     &lt;/div&gt;
     &lt;div&gt;
         &lt;label for=&quot;lastName&quot;&gt;
             Last name&lt;/label&gt;&lt;br /&gt;
-        {{view Ember.TextField valueBinding=&quot;content.currentCustomer.lastName&quot;}}
+        {{view Ember.TextField valueBinding=&quot;controller.currentCustomer.lastName&quot;}}
     &lt;/div&gt;
     &lt;div&gt;
         &lt;label for=&quot;email&quot;&gt;
             Email&lt;/label&gt;&lt;br /&gt;
-        {{view Ember.TextField valueBinding=&quot;content.currentCustomer.email&quot;}}
+        {{view Ember.TextField valueBinding=&quot;controller.currentCustomer.email&quot;}}
     &lt;/div&gt;
     &lt;div&gt;
         &lt;label for=&quot;phone&quot;&gt;
             Phone&lt;/label&gt;&lt;br /&gt;
-        {{view Ember.TextField valueBinding=&quot;content.currentCustomer.phone&quot;}}
+        {{view Ember.TextField valueBinding=&quot;controller.currentCustomer.phone&quot;}}
     &lt;/div&gt;
     &lt;p&gt;
-        &lt;button id=&quot;submit&quot; {{action &quot;save&quot; 
-          on=&quot;click&quot; target=&quot;this&quot; }} &gt;Submit&lt;/button&gt;
+        &lt;button id=&quot;submit&quot; {{action &quot;save&quot; on=&quot;click&quot; target=&quot;view&quot; }} &gt;Submit&lt;/button&gt;
     &lt;/p&gt;
-&lt;/div&gt;</pre>
+&lt;/div&gt;
+</pre>
     <p>The <code>CreateEditCustomerView</code></p>
-    <pre lang="jscript">app.CreateEditCustomerView = Ember.View.extend({
-    template: app.getView('create_edit_customer'),
-    contentBinding: 'controller.namespace.customerController',
-    name: &quot;create_edit_customer&quot;,
-    save: function (event) {
-        this.get('content').save();
-    },
-    random: function () {
-        this.get('content').random();
-    }
-});</pre>
+    <pre lang="jscript">    App.CreateEditCustomerView = Ember.View.extend({
+        template: getView(&#39;create_edit_customer&#39;),
+        init: function () {
+            this._super();
+            this.set(&#39;controller&#39;, App.applicationController);
+        },
+        save: function (event) {
+            this.get(&#39;controller&#39;).send(&#39;save&#39;);
+        },
+        random: function () {
+            this.get(&#39;controller&#39;).send(&#39;random&#39;);
+        },
+        name: &quot;CreateEditCustomerView&quot;
+    });</pre>
     <p>
         As you see in the template, there are some <em>Handlebars </em>syntax, The first name text
-        box is defined as <code>{{view Ember.TextField valueBinding=&quot;content.currentCustomer.firstName&quot;}}</code>.
-        Root binding object - content is our customer controller, bound via binding syntax
-        of Ember &quot;<code>contentBinding</code>&quot;. At this stage, you may ask &quot;How it was bound?&quot; That is
-        Ember magic syntax, we use content + &quot;Binding&quot; to tell Ember know that 
-		<code>controller.namespace.customerController</code>
-        is bound to content property of <code>CreateEditCustomerView</code>. There are 2 actions in this
+        box is defined as <code>{{view Ember.TextField valueBinding=&quot;controller.currentCustomer.firstName&quot;}}</code>. There are 2 actions in this
         view, first is random a new customer and second is save a customer, in the template,
-        you easily found two lines <code>{{action &quot;random&quot; on=&quot;click&quot; target=&quot;this&quot; }}</code> and <code>{{action
-        &quot;save&quot; on=&quot;click&quot; target=&quot;this&quot; }}</code>. Both of those actions are click event.
+        you easily found two lines <code>{{action &quot;random&quot; on=&quot;click&quot; target=&quot;view&quot; }}</code> and <code>{{action
+        &quot;save&quot; on=&quot;click&quot; target=&quot;view&quot; }}</code>. Both of those actions are click event.
     </p>
 
 
@@ -492,13 +487,12 @@ app.customerController = app.CustomerController.create();</pre>
 &lt;/div&gt;
 &lt;div id=&quot;customerListContent&quot;&gt;
     &lt;table&gt;
-        {{#unless view.customers.length}}
+        {{#unless controller.customers.length}}
         &lt;tr&gt;
             &lt;th&gt; First name &lt;/th&gt;
             &lt;th&gt; Last name &lt;/th&gt;
             &lt;th&gt; Email &lt;/th&gt;
             &lt;th&gt; Phone &lt;/th&gt;
-            &lt;th&gt; #Action &lt;/th&gt;
         &lt;/tr&gt;
         &lt;tr&gt;
             &lt;td colspan=&quot;4&quot; align=&quot;center&quot;&gt;
@@ -513,7 +507,7 @@ app.customerController = app.CustomerController.create();</pre>
             &lt;th&gt; Phone &lt;/th&gt;
             &lt;th&gt; #Action &lt;/th&gt;
         &lt;/tr&gt;
-        {{#each view.customers}}
+        {{#each controller.customers}}
         &lt;tr {{bindAttr class=&quot;this.active:active:normal&quot;}} {{bindAttr id=&quot;this.id&quot;}}&gt;
             &lt;td&gt;
                 {{this.firstName}}
@@ -528,60 +522,56 @@ app.customerController = app.CustomerController.create();</pre>
                 {{this.phone}}
             &lt;/td&gt;
             &lt;td align=&quot;center&quot;&gt;
-                &lt;a href=&quot;#&quot; class=&quot;edit&quot; {{action &quot;edit&quot; 
-                   on=&quot;click&quot; target=&quot;this&quot; }} {{bindAttr value=&quot;this.id&quot;}}&gt;Edit&lt;/a&gt;
+                &lt;a href=&quot;#&quot; class=&quot;edit&quot; {{action &quot;edit&quot; on=&quot;click&quot; target=&quot;view&quot; }} {{bindAttr value=&quot;this.id&quot;}}&gt;Edit&lt;/a&gt;
                 |
-                &lt;a href=&quot;#&quot; class=&quot;delete&quot; {{action &quot;remove&quot; 
-                  on=&quot;click&quot; target=&quot;this&quot; }} {{bindAttr value=&quot;this.id&quot;}}&gt;Delete&lt;/a&gt;
+                &lt;a href=&quot;#&quot; class=&quot;delete&quot; {{action &quot;remove&quot; on=&quot;click&quot; target=&quot;view&quot; }} {{bindAttr value=&quot;this.id&quot;}}&gt;Delete&lt;/a&gt;
             &lt;/td&gt;
         &lt;/tr&gt;
         {{/each}} 
         {{/unless}}
     &lt;/table&gt;
-&lt;/div&gt;</pre>
+&lt;/div&gt;
+</pre>
     <p>The  <code>CustomerListV<code></code>iew</code>  </p>
-    <pre lang="jscript">app.CustomerListView = Ember.View.extend({
-    contentBinding: 'controller.namespace.customerController',
-    customersBinding: 'controller.namespace.customerController.customers',
-    template: app.getView('customer_list'),
-    name: &quot;customer_list&quot;,
-    edit: function (event) {
-        var id = $(event.target).attr('value');
-        var controller = this.get('content').edit(id);
-    },
-    remove: function (event) {
-        var id = $(event.target).attr('value');
-        var controller = this.get('content');
-        this.animateItem(id, function () {
-            controller.remove(id);
-        }, controller);
-    },
-    animateItem: function (id, callback, target) {
-        $('#' + id).animate({ opacity: 0 }, 200, &quot;linear&quot;, function () {
-            $(this).animate({ opacity: 1 }, 200);
-            if (typeof callback == 'function') {
-                target = target | null;
-                callback.call(target);
-            }
-        });
-    }
-});</pre>
+    <pre lang="jscript">    App.CustomerListView = Ember.View.extend({
+        template: getView(&#39;customer_list&#39;),
+        init: function () {
+            this._super();
+            this.set(&#39;controller&#39;, App.applicationController);
+        },
+        edit: function () {
+            var id = $(event.target).attr(&#39;value&#39;);
+            var controller = this.get(&#39;controller&#39;).send(&#39;edit&#39;, id);
+        },
+        remove: function () {
+            var id = $(event.target).attr(&#39;value&#39;);
+            var controller = this.get(&#39;controller&#39;);
+            this.animateItem(id, function () {
+                controller.send(&#39;remove&#39;, id);
+            }, controller);
+        },
+        animateItem: function (id, callback, target) {
+            $(&#39;#&#39; + id).animate({ opacity: 0 }, 200, &quot;linear&quot;, function () {
+                $(this).animate({ opacity: 1 }, 200);
+                if (typeof callback == &#39;function&#39;) {
+                    target = target | null;
+                    callback.call(target);
+                }
+            });
+        },
+        name: &quot;CustomerListView&quot;
+    });</pre>
 <p>Each action create/edit/delete customer, we need to display message result, in 
 <code>MessageView</code>, this is message template.</p>
-<pre lang="jscript">{{#unless content.currentResult.errorCode}}
-&lt;div id='message'&gt;
-    {{content.currentResult.errorMessage}} &amp;nbsp;
+<pre lang="jscript">{{#unless controller.currentResult.errorCode}}
+&lt;div id=&#39;message&#39;&gt;
+    {{controller.currentResult.errorMessage}} &amp;nbsp;
 &lt;/div&gt;
 {{else}}
-&lt;div id='error'&gt;
-    {{content.currentResult.errorMessage}} &amp;nbsp;
+&lt;div id=&#39;error&#39;&gt;
+    {{controller.currentResult.errorMessage}} &amp;nbsp;
 &lt;/div&gt;
 {{/unless}}</pre>
-    <p>This view takes no action&nbsp;</p>
-    <pre lang="jscript">app.MessageView = Ember.View.extend({
-    template: app.getView('message'),
-    name: &quot;message&quot;
-});</pre>
 
     <p><code>CreateEditCustomerView</code>, <code>CustomerListView</code>, and 
 	<code>MessageView</code> are composed to <code>ApplicationView</code>, template defined in <em>main.htm</em>.</p>
@@ -601,36 +591,31 @@ app.customerController = app.CustomerController.create();</pre>
 &lt;div id=&quot;footer&quot;&gt;
 
 &lt;/div&gt;</pre>
-<pre lang="jscript">app.ApplicationView = Ember.View.extend({
-    Title: &quot;Example of Ember.js application&quot;,
-    template: app.getView('main'),
-    name: &quot;ApplicationView&quot;
-});</pre>
+<pre lang="jscript">    App.ApplicationView = Ember.View.extend({
+        Title: &quot;Example of Ember.js application&quot;,
+        template: getView(&#39;main&#39;),
+        init: function () {
+            this._super();
+            this.set(&#39;controller&#39;, App.applicationController);
+        },
+        name: &quot;ApplicationView&quot;
+    });</pre>
 
     <h2>The Ember Route</h2>
     <p>
         We already created application, controllers, views, models but there is one more thing to make our application work, a route.        
 
         Route will connect application controller to application view, initialize application controller and in sequential order,
-        application view is bound/rendered to screen. Now user can see, touch views and get right response from controllers.
+        application view is bound/rendered to screen. In this example, I use default 
+        IndexRoute with path /. Now user can see, touch views and get right response from controllers.
 
     </p>
 
-    <pre lang="jscript">// Router, this need to connect view and controller
-app.Router = Ember.Router.extend({
-    root: Ember.Route.extend({
-        defaults: Ember.Route.transitionTo('index'),
-        index: Ember.Route.extend({
-            route: '/',
-            connectOutlets: function (router) {
-                var controller = router.get('applicationController');
-                var context = app.customerController;
-                context.initialize();
-                controller.connectOutlet('application', context); // connectOutlet(nameOfView without suffix *view, controller)
-            }
-        })
-    })
-});</pre>
+    <pre lang="jscript">    App.IndexRoute = Ember.Route.extend({
+        model: function () {
+            return App.applicationController.initialize();
+        }
+    });</pre>
 
     <h2>Embedding SignalR&nbsp;</h2>
     <p>
@@ -701,7 +686,7 @@ namespace Ember.n.SignalR
         In order clients could communicate with server through SignalR pipeline, we need to include 
 		the hub script and implement <code>customerHub </code>in client side&nbsp;</p>
         <p><em>&lt;script src=&quot;/signalr/hubs &quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</em>&nbsp;</p>
-    <pre lang="jscript">(function (app) {
+    <pre lang="jscript">(function (App) {
     var hub = $.connection.customerHub;
 
     function findCustomer(id) {
@@ -735,7 +720,7 @@ namespace Ember.n.SignalR
 
     $.connection.hub.start();
 
-    app.hub = hub;
+    App.hub = hub;
 
 })(window.App); </pre>
     <p>
@@ -744,7 +729,7 @@ namespace Ember.n.SignalR
         reflects the modified models right. &nbsp;</p><h2>The Ember Observers&nbsp;</h2><p>In previous section, after inject SignalR, each client already get real-time updating what's changed on the server . For more interesting, we use Ember observable to observe property changed when user typing and notify server via&nbsp;<code>customerHub</code>, &nbsp;after that server will broadcast the change to all clients.&nbsp;&nbsp;Let's add above lines of code&nbsp;to <code>CustomerModel&nbsp;</code>&nbsp;</p><p><code></code></p><pre lang="jscript">  propertyChanged: function () {
             try {
                 if (!this.get('quiet') &amp;&amp; this.get('id')) {
-                    app.hub.server.update(this.plain());
+                    App.hub.server.update(this.plain());
                 }
             }
             catch (e) {

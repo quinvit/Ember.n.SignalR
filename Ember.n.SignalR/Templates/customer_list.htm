@@ -3,7 +3,7 @@
 </div>
 <div id="customerListContent">
     <table>
-        {{#unless view.customers.length}}
+        {{#unless controller.customers.length}}
         <tr>
             <th> First name </th>
             <th> Last name </th>
@@ -23,7 +23,7 @@
             <th> Phone </th>
             <th> #Action </th>
         </tr>
-        {{#each view.customers}}
+        {{#each controller.customers}}
         <tr {{bindAttr class="this.active:active:normal"}} {{bindAttr id="this.id"}}>
             <td>
                 {{this.firstName}}
@@ -38,9 +38,9 @@
                 {{this.phone}}
             </td>
             <td align="center">
-                <a href="#" class="edit" {{action "edit" on="click" target="this" }} {{bindAttr value="this.id"}}>Edit</a>
+                <a href="#" class="edit" {{action "edit" on="click" target="view" }} {{bindAttr value="this.id"}}>Edit</a>
                 |
-                <a href="#" class="delete" {{action "remove" on="click" target="this" }} {{bindAttr value="this.id"}}>Delete</a>
+                <a href="#" class="delete" {{action "remove" on="click" target="view" }} {{bindAttr value="this.id"}}>Delete</a>
             </td>
         </tr>
         {{/each}} 

@@ -1,6 +1,6 @@
 ﻿/// <reference path="_references.js" />
 
-(function (app) {
+(function (a) {
     var hub = $.connection.customerHub;
 
     function findCustomer(id) {
@@ -34,6 +34,6 @@
 
     $.connection.hub.start();
 
-    app.hub = hub;
+    a.hub = hub;
 
 })(window.App);
