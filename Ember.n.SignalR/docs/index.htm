@@ -82,9 +82,11 @@ and the controller acts as the link between the model and the view.</p><p><img w
     &lt;link href=&quot;../../Content/Site.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot; /&gt;
     &lt;script src=&quot;../../Scripts/libs/jquery-1.7.2.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
     &lt;script src=&quot;../../Scripts/libs/json3.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-    &lt;script src=&quot;../../Scripts/libs/handlebars.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-    &lt;script src=&quot;../../Scripts/libs/ember-1.0.0-pre.2.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;../../Scripts/libs/handlebars-1.0.0-rc.4.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;../../Scripts/libs/ember-1.0.0-rc.6.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;../../Scripts/libs/ember-data.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
 
+    &lt;script src=&quot;../../Scripts/jquery.signalR-1.0.0-alpha2.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;
     @RenderBody()
@@ -317,11 +319,11 @@ for additional properties of <code>Ember.Object</code>).</li>
 </ul>
   <h2>The Ember Controller</h2>
 <pre lang="jscript">App.CustomerController = Ember.Controller.extend({
-    store: app.Store.create(),
+    store: App.Store.create(),
     currentResult: null,
     currentCustomer: null,
     random: function () {
-        var customer = app.CustomerModel.create().random();
+        var customer = App.CustomerModel.create().random();
         if (this.get('currentCustomer')) {
             this.get('currentCustomer')
                 .set('active', false)
@@ -332,8 +334,8 @@ for additional properties of <code>Ember.Object</code>).</li>
     create: function (customer) {
         this.set('currentResult', this.get('store').create(customer.plain()));
         if (!this.currentResult.errorCode) {
-            this.set('currentCustomer', app.CustomerModel.create());
-            var newCustomer = app.CustomerModel.create(this.get('currentResult').data);
+            this.set('currentCustomer', App.CustomerModel.create());
+            var newCustomer = App.CustomerModel.create(this.get('currentResult').data);
             this.get('customers').pushObject(newCustomer);
         }
     },
@@ -343,7 +345,7 @@ for additional properties of <code>Ember.Object</code>).</li>
         this.set('currentResult', this.store.remove(customer.id));
         if (!this.currentResult.errorCode) {
             if (this.get('currentCustomer').id === id) {
-                this.set('currentCustomer', app.CustomerModel.create());
+                this.set('currentCustomer', App.CustomerModel.create());
             }
             this.get('customers').removeObject(customer);
         }
@@ -354,7 +356,7 @@ for additional properties of <code>Ember.Object</code>).</li>
             if (Ember.isArray(this.currentResult.data)) { // Read all
                 var array = Ember.ArrayController.create({ content: [] });
                 this.currentResult.data.forEach(function (item, index) {
-                    array.pushObject(app.CustomerModel.create(item));
+                    array.pushObject(App.CustomerModel.create(item));
                 });
                 return array;
             }
@@ -394,7 +396,7 @@ for additional properties of <code>Ember.Object</code>).</li>
         var customer = this.read(id);
         this.set('currentCustomer', customer.set('active', true));
         this.set('currentResult',
-            app.ResultModel.create({
+            App.ResultModel.create({
                 errorMessage: 'Click Submit to save current customer.',
                 data: customer.getProperties(&quot;firstName&quot;, &quot;lastName&quot;, &quot;email&quot;, &quot;phone&quot;) // Keep copy
             }));
@@ -404,16 +406,16 @@ for additional properties of <code>Ember.Object</code>).</li>
         var array = this.read();
         this.set('customers', array);
         this.random();
-        this.set('currentResult', app.ResultModel.create({ errorMessage: 'Click Submit to create new customer.' }));
+        this.set('currentResult', App.ResultModel.create({ errorMessage: 'Click Submit to create new customer.' }));
     }
 });
-app.applicationController = app.CustomerController.create();</pre>
+App.applicationController = App.CustomerController.create();</pre>
     <p>
         Our <code>applicationController </code>controls logic when create, update or delete a customer, it stores
         result of each action in <code>currentResult</code> property and stores 
 		editing/creating
         customer in <code>currentCustomer</code> property. The customers array model is our customers
-        storage, it always be synchronized to server via <code>app.Store</code> and it is used to bind
+        storage, it always be synchronized to server via <code>App.Store</code> and it is used to bind
         to our views. We call <code>this.read()</code> to retrieve all customers from server when our
         controller is initialized. Do you know why we must use get or set method here? That
         is JavaScript way to deal with handling property changed. Actually in C#, the get/set
@@ -690,14 +692,14 @@ namespace Ember.n.SignalR
     var hub = $.connection.customerHub;
 
     function findCustomer(id) {
-        var c = app.customerController.get('customers').findProperty('id', id);
+        var c = App.customerController.get('customers').findProperty('id', id);
         return c;
     }
 
     hub.client.add = function (message) {
         var customer = JSON.parse(message);
         var c = findCustomer(customer.id);
-        !c &amp;&amp; app.customerController.get('customers').pushObject(app.CustomerModel.create(customer));
+        !c &amp;&amp; App.customerController.get('customers').pushObject(App.CustomerModel.create(customer));
     }
 
     hub.client.update = function (message) {
@@ -710,11 +712,11 @@ namespace Ember.n.SignalR
         var customer = JSON.parse(message);
         var c = findCustomer(customer.id);
         if (c) {
-            if (c.id === app.customerController.get('currentCustomer').id) {
-                app.customerController.set('currentCustomer', null);
-                app.customerController.random();
+            if (c.id === App.customerController.get('currentCustomer').id) {
+                App.customerController.set('currentCustomer', null);
+                App.customerController.random();
             }
-            app.customerController.get('customers').removeObject(c);
+            App.customerController.get('customers').removeObject(c);
         }
     }
 
