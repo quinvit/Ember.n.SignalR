@@ -168,7 +168,7 @@ I use <code>Newtonsoft.Json.Serialization</code> with <code>CamelCasePropertyNam
     }
 }</pre>
 <p>About the data repository for customers, I create a simple implementation <em>CrudDS.cs</em>, storing data in the <em>~/App_Data/Customer.em</em> physical file in binary format.
-        Now all server side codes needed was done. We focus on Ember application architecture
+        Now all server side codes needed were done. We focus on Ember application architecture
         in next step.
     </p>
     <h2>The Ember Application</h2>
@@ -426,7 +426,7 @@ App.applicationController = App.CustomerController.create();</pre>
         We saw the connecting between controller and model, now we dig into views. The view
         displays/binds values from / to model via controller anchor. I define view templates
         in separated <em>htm</em> files, load it via AJAX and use&nbsp;<code>Ember.Handlebars</code>&nbsp;to compile the
-        response text, it is easier to modify than putting it in script tag, we could use any
+        response text, it is easier for modifying than putting it in script tag, we could use any
         html editor such as MS Visual Studio, Notepad++...to edit view templates. Let see
 		<code>create_edit_customer</code> template, it is defined at <em>create_edit_customer.htm</em>.
     </p>
@@ -745,7 +745,7 @@ namespace Ember.n.SignalR
     <h2>Conclusion&nbsp;</h2>
     <p>
         Controllers, views, models and routes in Ember.js work very similar with ASP.NET MVC, so who already worked with ASP.NET MVC
-        can easily understand and get benefit from Ember.js. This article just is a introduction about Ember.js, to make a complex
+        can easily understand and get benefit from Ember.js. This article just is an introduction about Ember.js, to make a complex
         and real-time web application, we must dig into Ember objects more and more. SignalR in this example is a bridge, it makes sure
         models in client side synchronized with server.
 
